@@ -1,15 +1,29 @@
-import React, {useContext, useEffect} from 'react';
-import {View, Text, SafeAreaView, FlatList} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {View, Text, SafeAreaView, FlatList, Alert} from 'react-native';
 import ProductListItem from '../components/products/ProductListItem';
 import { BasketContext } from '../contexts/BasketContext';
 import {DatabaseContext} from '../contexts/DatabaseContext';
 import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native'
+import { instance } from '../services/instance';
 
 export default function Home() {
-  const {state} = useContext(DatabaseContext);
+  const {state, dispatch} = useContext(DatabaseContext);
   const {state: basketState, dispatch: basketDispatch} = useContext(BasketContext);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const navigation: NavigationProp<ParamListBase> = useNavigation();
+  
+  const getProducts = async () => {
+    try {
+      setLoading(true);
+      const products = await instance.get('products');
+      dispatch({type: 'SET_DATABASE', payload: {products: products.data}});
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleProductPress = (id: number) => {
       navigation.navigate("ProductDetails", {
@@ -37,7 +51,9 @@ export default function Home() {
   return (
     <SafeAreaView style={{flex: 1}}>
       <FlatList
-        contentContainerStyle={{paddingHorizontal: 30}}
+      onRefresh={getProducts}
+      refreshing={loading}
+        contentContainerStyle={{padding: 30}}
         style={{flex: 1}}
         renderItem={({item, index}) => (
           <ProductListItem

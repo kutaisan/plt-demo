@@ -9,7 +9,6 @@ import {
   Text,
   SafeAreaView,
   FlatList,
-  TouchableOpacity,
 } from 'react-native';
 import C2AButton from '../components/buttons/clickToAction';
 import PriceText from '../components/products/PriceText';
@@ -64,7 +63,7 @@ export default function Basket() {
     <SafeAreaView style={{flex: 1}}>
       <FlatList
         style={{flex: 1}}
-        contentContainerStyle={{flexGrow: 1, paddingHorizontal: 30}}
+        contentContainerStyle={{flexGrow: 1, padding:30}}
         renderItem={({item, index}) => (
           <ProductListItem
             item={item}
@@ -80,7 +79,7 @@ export default function Basket() {
             style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             <C2AButton
               title="Go find a few products to add here!"
-              onPress={() => navigation.navigate('Home')}
+              onPress={() => navigation.navigate('Home', { screen: 'Home'})}
             />
           </View>
         )}
